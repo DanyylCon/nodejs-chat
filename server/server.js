@@ -1,11 +1,16 @@
 const express = require('express');
 const app = express();
-const path = require('path');
+const nunjucks = require('nunjucks');
 
 const port = 3000;
 
+nunjucks.configure('./client', {
+    autoescape: true,
+    express: app
+});
+
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'client', 'index.html'))
+    res.render('index.html', { date: new Date() });
 })
 
 app.listen(port, '0.0.0.0', () => {
