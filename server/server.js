@@ -19,6 +19,15 @@ app.get('/', (req, res) => {
 
 io.on('connection', function (socket) { 
     socket.emit('connected', 'You are connected!!!');
+
+    socket.on('msg', content => {
+        const msgObj = {
+            date: new Date(),
+            content: content,
+            username: 'Danny'
+        }
+        socket.emit('message', msgObj);
+    })
 });
 
 server.listen(port, '0.0.0.0', () => {

@@ -34,7 +34,7 @@ function response(data) {
       //socket.emit("receiveHistory");
     });
   
-    // socket.on("message", addMessage);
+    socket.on("message", addMessage);
   
     // socket.on("history", messages => {
     //   for (let message of messages) {
@@ -63,7 +63,7 @@ function response(data) {
       message.date = new Date(message.date).toLocaleString();
       message.username = encodeHTML(message.username);
       message.content = encodeHTML(message.content);
-  
+      
       var html = `
               <li>
                   <div class="message-data">
