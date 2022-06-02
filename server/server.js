@@ -3,6 +3,10 @@ const app = express();
 const nunjucks = require('nunjucks');
 const server = require('http').Server(app);
 const io = require('socket.io')(server, { serveClient: true });
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost:27017/chatik', {});
+mongoose.Promise = require('bluebird');
 
 const port = 3000;
 
@@ -20,13 +24,19 @@ app.get('/', (req, res) => {
 io.on('connection', function (socket) { 
     socket.emit('connected', 'You are connected!!!');
 
+    socket.join('all');
+
     socket.on('msg', content => {
+       
         const msgObj = {
             date: new Date(),
             content: content,
-            username: 'Danny'
+            username: socket.id
         }
+
         socket.emit('message', msgObj);
+
+        socket.to('all').emit('message', msgObj);
     })
 });
 
