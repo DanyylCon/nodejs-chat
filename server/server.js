@@ -6,11 +6,11 @@ const io = require('socket.io')(server, { serveClient: true });
 const mongoose = require('mongoose');
 
 const passport = require('passport');
-const { Strategy } = require('passport-jwt');
+const { Strategy, ExtractJwt } = require('passport-jwt');
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    sercretOrKey: 'zw2J5ZvcsxGh3WsSTBVK'
+    secretOrKey: 'zw2J5ZvcsxGh3WsSTBVK'
 };
 
 passport.use( new Strategy( opts, function (jwt_payload, done) {
@@ -30,7 +30,15 @@ nunjucks.configure('./client/views', {
 
 app.use( '/assets', express.static('./client/public') );
 
-app.get('/', (req, res) => {
+function verifyAuth( req, res, next ){
+    passport.authenticate('jwt', {session: false}, (err, decryptToken, jwtError) => {
+        if( err != void(0) || jwtError != void(0) ) return res.render( 'index.html', { error: err || jwtError } );
+        req.user = decryptToken;
+        next();
+    })( req, res, next );
+}
+
+app.get('/', verifyAuth, (req, res) => {
     res.render('index.html', { date: new Date() });
 });
 
