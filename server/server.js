@@ -5,6 +5,19 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server, { serveClient: true });
 const mongoose = require('mongoose');
 
+const passport = require('passport');
+const { Strategy } = require('passport-jwt');
+
+const opts = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    sercretOrKey: 'zw2J5ZvcsxGh3WsSTBVK'
+};
+
+passport.use( new Strategy( opts, function (jwt_payload, done) {
+    if( jwt_payload != void(0) ) return done( false, jwt_payload );
+    done();
+} ));
+
 mongoose.connect('mongodb://localhost:27017/chatik');
 mongoose.Promise = require('bluebird');
 
